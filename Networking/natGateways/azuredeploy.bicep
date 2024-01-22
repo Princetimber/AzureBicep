@@ -8,11 +8,7 @@ param natGatewayName string = '${toLower(replace(resourceGroup().name, 'uksouthr
 param publicIpName string = '${natGatewayName}pubIp'
 
 @description('Required:name of subnet to deploy the nat gateway in')
-@allowed([
-  'subnet1'
-  'subnet2'
-])
-param subnetName string
+param subnets array
 
 @description('Required:name of the virtual network to deploy the nat gateway in')
 param virtualNetworkName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}vnet'
@@ -26,6 +22,9 @@ param tags object = {
   DisplayName: 'Nat Gateway'
   Department: 'Engineering'
 }
+
+@description('Required: sku name of the nat gateway')
+param skuName string = 'Standard'
 
 resource nsg 'Microsoft.Network/networkSecurityGroups@2023-06-01' existing = {
   name: networkSecurityGroupName
@@ -44,7 +43,7 @@ resource publicIp 'Microsoft.Network/publicIPAddresses@2023-06-01' = {
     idleTimeoutInMinutes: 4
   }
   sku: {
-    name: 'Standard'
+    name: skuName
   }
 }
 
@@ -52,7 +51,7 @@ resource natgw 'Microsoft.Network/natGateways@2023-06-01' = {
   name: natGatewayName
   location: location
   sku: {
-    name: 'Standard'
+    name: skuName
   }
   properties: {
     idleTimeoutInMinutes: 4
@@ -64,12 +63,12 @@ resource natgw 'Microsoft.Network/natGateways@2023-06-01' = {
   }
   tags: tags
 }
-resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-06-01' = {
-  name: subnetName
+resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-06-01' = [for subnet in subnets: {
+  name: subnet
   parent: vnet
   properties: {
-    addressPrefix: '100.16.1.0/24'
-    natGateway: subnetName != 'gatewaySubnet' ? {
+    addressPrefix: subnet.addressPrefix
+    natGateway: subnet != 'gatewaySubnet' ? {
       id: natgw.id
     } : null
     networkSecurityGroup: {
@@ -97,6 +96,6 @@ resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-06-01' = {
       }
     ]
   }
-}
+}]
 output id string = natgw.id
 output name string = natgw.name
