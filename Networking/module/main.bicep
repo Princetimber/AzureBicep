@@ -52,7 +52,16 @@ module natgw '../natGateways/azuredeploy.bicep' = {
   name: 'nat-gateway'
   params: {
     location: location
-    subnetName: 'subnet1'
+    subnets: [
+      {
+        name: 'subnet1'
+        addressPrefix: '100.16.1.0/24'
+      }
+      {
+        name: 'subnet2'
+        addressPrefix: '100.16.2.0/24'
+      }
+    ]
   }
 }
 output natgwId string = natgw.outputs.id
