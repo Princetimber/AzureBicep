@@ -111,4 +111,4 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2023-06-01' = {
   }
 }
 output nsgId string = nsg.id
-output Name string = nsg.name
+output name string = nsg.name
