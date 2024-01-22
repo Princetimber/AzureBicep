@@ -35,3 +35,6 @@ resource lock 'Microsoft.Authorization/locks@2020-05-01' = {
     rg
   ]
 }
+output name string = rg.name
+output location string = rg.location
+output id string = rg.id
