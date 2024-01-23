@@ -3,10 +3,11 @@ targetScope = 'subscription'
 
 // Get the location from the deployment
 param location string = deployment().location
+param resourceGroupName string = 'devengnruksouthrg'
 module resourcegroup '../resourcegroups/azuredeploy.bicep' = {
   name: 'resource-group'
   params: {
-    resourceGroupName: ''
+    resourceGroupName: resourceGroupName
     location: location
   }
 }
