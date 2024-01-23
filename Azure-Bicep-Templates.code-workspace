@@ -1,6 +1,14 @@
 {
 	"folders": [
 		{
+			"name": "Cli",
+			"path": "./Cli"
+		},
+		{
+			"name": "compute",
+			"path": "./compute"
+		},
+		{
 			"name": "Groups",
 			"path": "./Groups"
 		},
@@ -11,10 +19,6 @@
 		{
 			"name": "security",
 			"path": "./security"
-		},
-		{
-			"name": "compute",
-			"path": "./compute"
 		}
 	],
 	"settings": {
