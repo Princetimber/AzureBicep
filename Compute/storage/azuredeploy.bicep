@@ -17,11 +17,11 @@ param skuName string = 'Standard_LRS'
 
 @description('storage kind.')
 @allowed([ 'Storage', 'StorageV2', 'BlobStorage', 'FileStorage', 'BlockBlobStorage' ])
-param storageAccountKind string
+param storageAccountKind string = 'StorageV2'
 
 @description('storage access tier.')
 @allowed([ 'Hot', 'Cool' ])
-param storageAccountAccessTier string
+param storageAccountAccessTier string = 'Hot'
 
 @description('resource location.')
 param location string = resourceGroup().location
@@ -53,7 +53,7 @@ param storageAccountMode string = 'New'
 ])
 param subnets array
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = if (storageAccountMode == 'New') {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = if (storageAccountMode == 'New' && storageAccountName != '') {
   name: storageAccountName
   location: location
   tags: tags
@@ -104,5 +104,8 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = if (sto
     vnet
   ]
 }
-output name string = storageAccount.name
-output id string = storageAccount.id
+resource stga 'Microsoft.Storage/storageAccounts@2023-01-01' existing = if (storageAccountMode == 'Existing' && storageAccountName != '') {
+  name: storageAccountName
+}
+output storageAccountName string = storageAccountMode == 'New' ? storageAccount.name : stga.name
+output storageAccountResourceId string = storageAccountMode == 'New' ? storageAccount.id : stga.id
