@@ -1,22 +1,32 @@
 param location string = resourceGroup().location
+param objectId string
+param tenantId string
+param publicIpAddress string
+param expirationDateInSeconds int
+param notBeforeDateInSeconds int
+param secretName string
+@secure()
+param secretValue string
+
 module keyvault '../KeyVault/azuredeploy.bicep' = {
   name: 'key-vault'
   params: {
     location: location
-    objectId: '' //object id of the user
-    tenantId: '' //tenant id
-    publicIpAddress: '' //public ip address allowed to access the key vault.
+    objectId: objectId
+    tenantId: tenantId
+    publicIpAddress: publicIpAddress
   }
 }
 output keyVaultName string = keyvault.outputs.name
 output vaultId string = keyvault.outputs.id
+
 module secret '../Secrets/azuredeploy.bicep' = {
   name: 'secrets'
   params: {
-    expirationDateInSeconds: 1
-    notBeforeDateInSeconds: 1
-    secretName: ''
-    secretValue: ''
+    expirationDateInSeconds: expirationDateInSeconds
+    notBeforeDateInSeconds: notBeforeDateInSeconds
+    secretName: secretName
+    secretValue: secretValue
   }
   dependsOn: [
     keyvault
@@ -25,12 +35,3 @@ module secret '../Secrets/azuredeploy.bicep' = {
 output secretName string = secret.outputs.name
 output secretId string = secret.outputs.id
 output version string = secret.outputs.version
-
-module sshPubKey '../ssh/azuredeploy.bicep' = {
-  name: 'sshKey'
-  params: {
-    location: location
-    name: 'sshPublicKey'
-    publicKey: '' //public key
-  }
-}

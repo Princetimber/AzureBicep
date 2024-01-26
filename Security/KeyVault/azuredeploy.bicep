@@ -3,7 +3,7 @@
 param keyVaultName string = 'kv${uniqueString(resourceGroup().id)}'
 
 @description('required: The name of the virtual network that will access the key vault. This usually will be an existing virtual network.')
-param vnetName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}vnet'
+param vnetName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}vnet'
 
 @description('required:The resource location. This will be one of the supported and registered Azure Geo Regions (e.g. West US, East US, Southeast Asia, etc.).This defaults to the location of the resource group.')
 param location string = resourceGroup().location
@@ -26,7 +26,6 @@ param tags object = {
 param subnets array = [
   'gatewaySubnet'
   'subnet1'
-  'subnet2'
 ]
 resource vnet 'Microsoft.Network/virtualNetworks@2023-06-01' existing = {
   name: vnetName
