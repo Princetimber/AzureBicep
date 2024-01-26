@@ -36,7 +36,7 @@ param tags object = {
 param publicIpAddress string
 
 @description('Required: The name of the virtual network allowed to access the storage account.This defaults to the resource group name prefixed with vnet.')
-param virtualNetworkName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}vnet'
+param virtualNetworkName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}vnet'
 
 resource vnet 'Microsoft.Network/virtualNetworks@2023-06-01' existing = {
   name: virtualNetworkName
@@ -100,9 +100,6 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = if (sto
       }
     }
   }
-  dependsOn: [
-    vnet
-  ]
 }
 resource stga 'Microsoft.Storage/storageAccounts@2023-01-01' existing = if (storageAccountMode == 'Existing' && storageAccountName != '') {
   name: storageAccountName
