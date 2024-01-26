@@ -1,17 +1,17 @@
 @description('Required: The name of the local gateway public IP address.The name defaults to the resource group name prefixed with lgwPubIp. This is the public IP address of the local gateway. It must be a unique to the local gateway provided by your service provider..')
-param localGatewayPublicIpAddress string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}lgwPubIp'
+param localGatewayPublicIpAddress string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}lgwPubIp'
 
 @description('Required: The name of the local gateway. This is uniques and defaults to the resource group name prefixed with lgw.')
-param localGatewayName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}lgw'
+param localGatewayName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}lgw'
 
 @description('Required:The name for the virtual network. The name defaults to the resource group name prefixed with vnet.')
-param vnetName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}vnet'
+param vnetName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}vnet'
 
 @description('Required: The name for the virtual network gateway to be created. The name defaults to the resource group name prefixed with vnetgw.')
-param vnetGatewayName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}vnetgw'
+param vnetGatewayName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}vnetgw'
 
 @description('Required: The name the public IP address to be created. The name defaults to the resource group name prefixed with vnetGWPubIp.')
-param PublicIpName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}vnetGWPubIp'
+param PublicIpName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}vnetGWPubIp'
 
 @description('Required: The location where the virtual network gateway will be created.')
 param location string = resourceGroup().location
@@ -28,16 +28,15 @@ param subnetName string
 @description('Optional: tags of the resource.')
 param tags object = {
   environment: 'dev'
-  displayName: 'Gateway'
+  displayName: 'virtual network gateway'
 }
 
 resource localNetworkGateway 'Microsoft.Network/localNetworkGateways@2023-06-01' = {
   name: localGatewayName
   location: location
-  tags: tags.properties.displayName == 'local Gateway' ? tags : {
+  tags: {
     environment: 'dev'
-    displayName: 'local Gateway'
-  }
+    displayName: 'local Gateway' }
   properties: {
     localNetworkAddressSpace: {
       addressPrefixes: addressPrefixes
@@ -55,18 +54,21 @@ resource pubIp 'Microsoft.Network/publicIPAddresses@2023-06-01' = {
   name: PublicIpName
   location: location
   properties: {
-    publicIPAllocationMethod: 'Dynamic'
+    publicIPAllocationMethod: 'Static'
     publicIPAddressVersion: 'IPv4'
     idleTimeoutInMinutes: 4
   }
+  sku: {
+    name: 'Standard'
+  }
+  dependsOn: [
+    vnet
+  ]
 }
 resource vnetGateway 'Microsoft.Network/virtualNetworkGateways@2023-06-01' = {
   name: vnetGatewayName
   location: location
-  tags: tags.properties.displayName == 'Gateway' ? tags : {
-    environment: 'dev'
-    displayName: 'Gateway'
-  }
+  tags: tags
   properties: {
     gatewayType: 'Vpn'
     vpnType: 'RouteBased'
@@ -80,6 +82,9 @@ resource vnetGateway 'Microsoft.Network/virtualNetworkGateways@2023-06-01' = {
         name: pubIp.name
         id: pubIp.id
         properties: {
+          publicIPAddress: {
+            id: pubIp.id
+          }
           subnet: {
             id: '${vnet.id}/subnets/${subnetName}'
           }
