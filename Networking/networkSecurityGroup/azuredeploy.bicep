@@ -2,7 +2,7 @@
 param location string = resourceGroup().location
 
 @description('Required:name of the network security group to create.This must be unique within the resource group and can not be changed after creation. It defaults to the resource group name prefixed with nsg.')
-param name string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}nsg'
+param name string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}nsg'
 
 @description('Required: source address prefixes, which includes the IP address range or CIDR block for the source of the rule. This can be internet, virtual network, subnet, or IP address or Public IP Address based on the service.')
 param sourceAddressPrefixes array
@@ -98,6 +98,21 @@ var securityRules = [
       sourceAddressPrefix: '*'
       sourcePortRange: '*'
       destinationAddressPrefix: destinationAddressPrefix
+      destinationPortRange: '53'
+    }
+  }
+  {
+    name: 'allow_ntp_inbound'
+    properties: {
+      direction: 'Inbound'
+      access: 'Allow'
+      protocol: 'Udp'
+      priority: 206
+      sourceAddressPrefix: '*'
+      sourcePortRange: '*'
+      destinationAddressPrefix: destinationAddressPrefix
+      destinationPortRange: '123'
+      description: 'Allow NTP inbound traffic'
     }
   }
 ]
