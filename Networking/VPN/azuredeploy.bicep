@@ -2,10 +2,10 @@
 param connectionName string
 
 @description('Required:The name of the virtual network gateway.This defaults to the name of the resource group prefixed with vnetgw.')
-param vnetGatewayName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}vnetgw'
+param vnetGatewayName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}vnetgw'
 
-@description('The name of the local network gateway. this defaults to the name of the resource group prefixed with localgw.')
-param localNetworkGatewayName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}localgw'
+@description('required: The name of the local network gateway. this defaults to the name of the resource group prefixed with lgw.')
+param localNetworkGatewayName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}lgw'
 
 @description('Required:The shared key for the VPN connection.This is used to set the shared key for the connection between the virtual network gateway and the local network gateway.')
 param sharedKey string
@@ -13,7 +13,7 @@ param sharedKey string
 @description('Required: The location of the VPN connection. this defaults to the location of the resource group.')
 param location string = resourceGroup().location
 
-@description('The tags of the VPN connection.')
+@description('Optional:The tags of the VPN connection.')
 param tags object = {
   displayName: 'vpnConnection'
   environment: 'dev'
@@ -55,11 +55,11 @@ resource vpnConnection 'Microsoft.Network/connections@2023-06-01' = {
     }
     localNetworkGateway2: {
       id: localGW.id
-      location: localGW.location
+      location: location
       properties: {
         gatewayIpAddress: localGW.properties.gatewayIpAddress
         localNetworkAddressSpace: {
-          addressPrefixes: [ resourceId('Microsoft.Network/localNetworkGateways', localGW.name, 'addressPrefixes') ]
+          addressPrefixes: localGW.properties.localNetworkAddressSpace.addressPrefixes
         }
       }
     }
