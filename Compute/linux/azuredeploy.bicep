@@ -40,16 +40,13 @@ param virtualMachineCount int = 1
 param location string = resourceGroup().location
 
 @description('required: availability set name. Default is resourcegroup name prefixed with avset.')
-param availabilitySetName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}avset'
+param availabilitySetName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}avset'
 
 @description('required:proximity placement group name. The name must be unique within the region. Default is resourcegroup name prefixed with ppg.')
-param proximityPlacementGroupName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}ppg'
+param proximityPlacementGroupName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}ppg'
 
 @description('required: virtual network name. use an existing virtual network. The name must be unique within the region. Default is resourcegroup name prefixed with vnet.')
-param vnetName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}vnet'
-
-@description('required: storage account name. use an existing storage account. The name must be unique within the region. Default is the unique id resourcegroup prefixed with stga.')
-param storageAccountName string = '${uniqueString(resourceGroup().id)}stga'
+param vnetName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}vnet'
 
 @description('required: network interface name.')
 param networkInterfaceName string = 'nic'
@@ -92,12 +89,6 @@ param autoShutdownNotificationTimeInMinutes int = 30
 
 @description('autoshutdown notification locale')
 param autoShutdownNotificationLocale string = 'en'
-
-@description('tenantId of the subscription')
-param tenantId string = subscription().tenantId
-
-@description('aadClientId of the subscription')
-param aadClientId string
 
 @description('required:authentication type. Default is password. Recommended is sshPublicKey.')
 @allowed([
@@ -170,15 +161,14 @@ var securityProfileJson = {
     vTpmEnabled: true
   }
 }
+var extensionName = 'GuestAttestation'
+var extensionPublisher = 'Microsoft.Azure.Security.LinuxAttestation'
+var extensionVersion = '1.0'
+var maaTenantName = 'GuestAttestation'
+var maaEndpoint = substring('emptystring', 0, 0)
 resource vnet 'Microsoft.Network/virtualNetworks@2023-06-01' existing = {
   name: vnetName
 }
-
-resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' existing = {
-  name: storageAccountName
-}
-
-var storageAccountUri = storageAccount.properties.primaryEndpoints.blob
 
 resource proximityPlacementGroup 'Microsoft.Compute/proximityPlacementGroups@2023-09-01' = {
   name: proximityPlacementGroupName
@@ -244,16 +234,10 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2023-09-01' = [for i 
     proximityPlacementGroup: {
       id: proximityPlacementGroup.id
     }
-    diagnosticsProfile: {
-      bootDiagnostics: {
-        enabled: true
-        storageUri: '${storageAccountUri}${vmName}${i + 1}'
-      }
-    }
     networkProfile: {
       networkInterfaces: [
         {
-          id: resourceId('Microsoft.Network/networkInterfaces', '${vmName}${networkInterfaceName}${i + 1}')
+          id: resourceId('Microsoft.Network/networkInterfaces', '${vmName}-${networkInterfaceName}${i + 1}')
           properties: {
             deleteOption: 'Delete'
           }
@@ -268,6 +252,7 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2023-09-01' = [for i 
       adminUsername: adminUsername
       adminPassword: adminPasswordOrKey
       linuxConfiguration: ((authenticationType == 'sshPublicKey') ? linuxConfiguration : null)
+      allowExtensionOperations: true
     }
     storageProfile: {
       osDisk: {
@@ -290,39 +275,24 @@ resource virtualMachine 'Microsoft.Compute/virtualMachines@2023-09-01' = [for i 
   }
 }]
 
-resource extension 'Microsoft.Compute/virtualMachines/extensions@2023-09-01' = [for i in virtualMachineCountRange: {
+resource vmExtension 'Microsoft.Compute/virtualMachines/extensions@2023-09-01' = [for i in virtualMachineCountRange: if ((securityType == 'TrustedLaunch') && ((securityProfileJson.uefiSettings.secureBootEnabled == true) && (securityProfileJson.uefiSettings.vTpmEnabled == true))) {
   parent: virtualMachine[i]
-  name: '${vmName}$AADSSHLoginForLinux${i + 1}'
+  name: extensionName
   location: location
   properties: {
-    publisher: 'Microsoft.Azure.ActiveDirectory'
-    type: 'AADLoginForLinux'
-    typeHandlerVersion: '1.0'
-    autoUpgradeMinorVersion: true
-    settings: {
-      aadLoginForLinuxConfiguration: {
-        aadAuthority: environment().portal
-        aadTenantId: tenantId
-        aadClientId: aadClientId
-        sshPublicKey: ((authenticationType == 'sshPublicKey') ? adminPasswordOrKey : null)
-      }
-    }
-    provisionAfterExtensions: [
-      'Microsoft.Compute.LinuxDiagnostic'
-    ]
-  }
-}]
-
-resource diagnosticExtension 'Microsoft.Compute/virtualMachines/extensions@2023-09-01' = [for i in virtualMachineCountRange: {
-  parent: virtualMachine[i]
-  name: '${vmName}-linuxdiagnostic${i + 1}'
-  location: location
-  properties: {
-    publisher: 'Microsoft.Azure.Diagnostics'
-    type: 'LinuxDiagnostic'
-    typeHandlerVersion: '4.0'
+    publisher: extensionPublisher
+    type: extensionName
+    typeHandlerVersion: extensionVersion
     autoUpgradeMinorVersion: true
     enableAutomaticUpgrade: true
+    settings: {
+      AttestationConfig: {
+        MaaSettings: {
+          maaEndpoint: maaEndpoint
+          maaTenantName: maaTenantName
+        }
+      }
+    }
   }
 }]
 
