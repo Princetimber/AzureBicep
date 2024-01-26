@@ -2,7 +2,7 @@
 param location string = resourceGroup().location
 
 @description('Required:name for the nat gateway. It defaults to the name of the resource group prefixed with natgw.')
-param natGatewayName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}natgw'
+param natGatewayName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}natgw'
 
 @description('Required: name of the public ip address. It defaults to resource name prefixed with pubIp.')
 param publicIpName string = '${natGatewayName}pubIp'
@@ -11,10 +11,10 @@ param publicIpName string = '${natGatewayName}pubIp'
 param subnets array
 
 @description('Required:name of the virtual network to deploy the nat gateway in')
-param virtualNetworkName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}vnet'
+param virtualNetworkName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}vnet'
 
 @description('Required:name of the network security group to deploy the nat gateway in')
-param networkSecurityGroupName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}nsg'
+param networkSecurityGroupName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}nsg'
 
 @description('Optional:tags to be added to the nat gateway')
 param tags object = {
@@ -64,7 +64,7 @@ resource natgw 'Microsoft.Network/natGateways@2023-06-01' = {
   tags: tags
 }
 resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-06-01' = [for subnet in subnets: {
-  name: subnet
+  name: subnet.name
   parent: vnet
   properties: {
     addressPrefix: subnet.addressPrefix
