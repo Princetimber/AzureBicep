@@ -6,10 +6,10 @@
 param location string = resourceGroup().location
 
 @description('Required: virtual network resource name. It defaults to the resourcegroup name preffixed with vnet.')
-param vnetName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}vnet'
+param vnetName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}vnet'
 
 @description('Required: network security group resource name. It defaults to the resourcegroup name preffixed with nsg.')
-param nsgName string = '${toLower(replace(resourceGroup().name, 'uksouthrg', ''))}nsg'
+param nsgName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}nsg'
 
 @description('Required: virtual network address prefixes. It is an array of strings.')
 param addressPrefixes array
@@ -88,6 +88,9 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2023-06-01' = if (vne
       dnsServers: dnsServers
     }
   }
+}
+resource vnets 'Microsoft.Network/virtualNetworks@2023-06-01' = if(vnetNewOrExisting == 'existing'){
+  name:vnetName
 }
 output name string = virtualNetwork.name
 output id string = virtualNetwork.id
