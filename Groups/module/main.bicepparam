@@ -1,3 +1,2 @@
 using './main.bicep'
-param resourceGroupName = 'inthecloudsenguksouthrg'
-
+param resourceGroupName = '' //TODO: set the resource group name

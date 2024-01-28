@@ -1,1 +1,1 @@
-az deployment group create -n deploy-network -g devengnruksouthrg --template-file ../networking/module/main.bicep --what-if -o jsonc
+az deployment sub create -n deploy-resource-group --location uksouth --template-file ../Groups/module/main.bicep --parameters ../Groups/module/main.parameters.json

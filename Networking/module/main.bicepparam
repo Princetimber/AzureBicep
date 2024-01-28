@@ -11,25 +11,25 @@ param dnsServers = [
   '1.1.1.1'
 ]
 param addressPrefixes = [
-  '100.68.0.0/16'
+  '' //TODO: Add address space here for the virtual network. Use the CIDR notation, such as 10.0.0.0/16.
 ]
 param subnets = [
   {
     name: 'gatewaySubnet'
-    addressPrefix: '100.68.0.0/27'
+    addressPrefix: '' //TODO: Add address space here for the gateway subnet. Use the CIDR notation, such as 10.0.0.0/27
   }
   {
     name: 'subnet1'
-    addressPrefix: '100.68.1.0/24'
+    addressPrefix: '' //TODO: Add address space here for the subnet. Use the CIDR notation, such as 10.0.0.0/24
   }
 ]
 param gatewayAddressPrefixes = [
-  '10.0.1.0/29'
-  '10.231.16.0/29'
+  '' //TODO: Add address space here for the gateway subnet. Use the CIDR notation, such as 192.168.0.1/24
+
 ]
-param localGatewayPublicIpAddress = '62.31.74.157'
-param destinationAddressPrefix = 'virtualNetwork'
-param connectionName = 'azure-pfsense-connection'
-param sharedKey = 'KZ@f$iYR8bbxa@w$tct5jDCe%Y@@g89&c#'
+param localGatewayPublicIpAddress = '' //TODO: Add local network Public IP address here
+param destinationAddressPrefix = '' //TODO: Add destination address space here for the virtual network. Use the CIDR notation, such as 'virtualNetwork','*' or 'CIDR'
+param connectionName = '' //TODO: Add connection name here
+param sharedKey = '' //TODO: Add shared key here for the connection.
 param subnetName = 'gatewaySubnet'
-param vnetneworexisting = 'new'
+param vnetneworexisting = '' //TODO: Add new or existing vnet here. Options are 'new' or 'existing'. Default is 'new'
