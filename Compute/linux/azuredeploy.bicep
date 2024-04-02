@@ -166,7 +166,7 @@ var extensionPublisher = 'Microsoft.Azure.Security.LinuxAttestation'
 var extensionVersion = '1.0'
 var maaTenantName = 'GuestAttestation'
 var maaEndpoint = substring('emptystring', 0, 0)
-resource vnet 'Microsoft.Network/virtualNetworks@2023-06-01' existing = {
+resource vnet 'Microsoft.Network/virtualNetworks@2023-09-01' existing = {
   name: vnetName
 }
 
@@ -199,7 +199,7 @@ resource availabilitySet 'Microsoft.Compute/availabilitySets@2023-09-01' = {
   }
 }
 
-resource nic 'Microsoft.Network/networkInterfaces@2023-06-01' = [for i in virtualMachineCountRange: {
+resource nic 'Microsoft.Network/networkInterfaces@2023-09-01' = [for i in virtualMachineCountRange: {
   name: '${vmName}-${networkInterfaceName}${i + 1}'
   location: location
   properties: {
