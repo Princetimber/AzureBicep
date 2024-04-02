@@ -59,7 +59,7 @@
 					"level": "warning"
 				},
 				"no-hardcoded-location": {
-					"level": "warning"
+					"level": "error"
 				},
 				"use-stable-resource-identifiers": {
 					"level": "warning"
@@ -120,7 +120,7 @@
 					"level": "warning"
 				},
 				"no-deployments-resources": {
-					"level": "warning"
+					"level": "off"
 				},
 				"simplify-json-null": {
 					"level": "warning"
@@ -151,5 +151,39 @@
 		"newLineKind": "lf",
 		"trimTrailingWhitespace": true,
 		"insertFinalNewline": true
+	},
+	"providers": {
+		"az": "builtin:",
+		"kubernetes": "builtin:",
+		"microsoftGraph": "builtin:",
+		"microsoft.insights": "builtin:",
+		"microsoft.security": "builtin:",
+		"microsoft.web": "builtin:",
+		"azurestack": "builtin:",
+		"microsoft.compute": "builtin:"
+	},
+	"implicitProviders": [
+		"az",
+		"kubernetes",
+		"microsoftGraph",
+		"microsoft.insights",
+		"microsoft.security",
+		"microsoft.web"
+	],
+	"experimentalFeaturesEnabled": {
+		"publishSource": true,
+		"legacyFormatter": true,
+		"microsoftGraphPreview": true,
+		"dynamicTypeLoading": true,
+		"symbolicNameCodegen": true
+	},
+	"moduleAliases": {
+		"ts": {},
+		"br": {
+			"public": {
+				"registry": "mcr.microsoft.com",
+				"modulePath": "bicep"
+			}
+		}
 	}
 }
