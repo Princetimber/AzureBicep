@@ -31,7 +31,7 @@ param tags object = {
   displayName: 'virtual network gateway'
 }
 
-resource localNetworkGateway 'Microsoft.Network/localNetworkGateways@2023-06-01' = {
+resource localNetworkGateway 'Microsoft.Network/localNetworkGateways@2023-09-01' = {
   name: localGatewayName
   location: location
   tags: {
@@ -47,10 +47,10 @@ resource localNetworkGateway 'Microsoft.Network/localNetworkGateways@2023-06-01'
 output localNetworkGatewayId string = localNetworkGateway.id
 output localNetworkGatewayName string = localNetworkGateway.name
 
-resource vnet 'Microsoft.Network/virtualNetworks@2023-06-01' existing = {
+resource vnet 'Microsoft.Network/virtualNetworks@2023-09-01' existing = {
   name: vnetName
 }
-resource pubIp 'Microsoft.Network/publicIPAddresses@2023-06-01' = {
+resource pubIp 'Microsoft.Network/publicIPAddresses@2023-09-01' = {
   name: PublicIpName
   location: location
   properties: {
@@ -65,7 +65,7 @@ resource pubIp 'Microsoft.Network/publicIPAddresses@2023-06-01' = {
     vnet
   ]
 }
-resource vnetGateway 'Microsoft.Network/virtualNetworkGateways@2023-06-01' = {
+resource vnetGateway 'Microsoft.Network/virtualNetworkGateways@2023-09-01' = {
   name: vnetGatewayName
   location: location
   tags: tags
