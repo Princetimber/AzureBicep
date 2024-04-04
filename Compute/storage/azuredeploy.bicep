@@ -38,7 +38,7 @@ param publicIpAddress string
 @description('Required: The name of the virtual network allowed to access the storage account.This defaults to the resource group name prefixed with vnet.')
 param virtualNetworkName string = '${toLower(replace(resourceGroup().name, 'enguksouthrg', '-'))}vnet'
 
-resource vnet 'Microsoft.Network/virtualNetworks@2023-06-01' existing = {
+resource vnet 'Microsoft.Network/virtualNetworks@2023-09-01' existing = {
   name: virtualNetworkName
 }
 @description('Required: Storage account mode to determine whether to create a new account or use an existing storage account.')

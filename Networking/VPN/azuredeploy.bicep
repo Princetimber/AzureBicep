@@ -19,13 +19,13 @@ param tags object = {
   environment: 'dev'
 }
 
-resource vnetGW 'Microsoft.Network/virtualNetworkGateways@2023-06-01' existing = {
+resource vnetGW 'Microsoft.Network/virtualNetworkGateways@2023-09-01' existing = {
   name: vnetGatewayName
 }
-resource localGW 'Microsoft.Network/localNetworkGateways@2023-06-01' existing = {
+resource localGW 'Microsoft.Network/localNetworkGateways@2023-09-01' existing = {
   name: localNetworkGatewayName
 }
-resource vpnConnection 'Microsoft.Network/connections@2023-06-01' = {
+resource vpnConnection 'Microsoft.Network/connections@2023-09-01' = {
   name: connectionName
   location: location
   tags: tags

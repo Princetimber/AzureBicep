@@ -26,15 +26,15 @@ param tags object = {
 @description('Required: sku name of the nat gateway')
 param skuName string = 'Standard'
 
-resource nsg 'Microsoft.Network/networkSecurityGroups@2023-06-01' existing = {
+resource nsg 'Microsoft.Network/networkSecurityGroups@2023-09-01' existing = {
   name: networkSecurityGroupName
 }
 
-resource vnet 'Microsoft.Network/virtualNetworks@2023-06-01' existing = {
+resource vnet 'Microsoft.Network/virtualNetworks@2023-09-01' existing = {
   name: virtualNetworkName
 }
 
-resource publicIp 'Microsoft.Network/publicIPAddresses@2023-06-01' = {
+resource publicIp 'Microsoft.Network/publicIPAddresses@2023-09-01' = {
   name: publicIpName
   location: location
   properties: {
@@ -47,7 +47,7 @@ resource publicIp 'Microsoft.Network/publicIPAddresses@2023-06-01' = {
   }
 }
 
-resource natgw 'Microsoft.Network/natGateways@2023-06-01' = {
+resource natgw 'Microsoft.Network/natGateways@2023-09-01' = {
   name: natGatewayName
   location: location
   sku: {
@@ -63,7 +63,7 @@ resource natgw 'Microsoft.Network/natGateways@2023-06-01' = {
   }
   tags: tags
 }
-resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-06-01' = [for subnet in subnets: {
+resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-09-01' = [for subnet in subnets: {
   name: subnet.name
   parent: vnet
   properties: {

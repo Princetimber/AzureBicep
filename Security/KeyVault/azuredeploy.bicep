@@ -27,7 +27,7 @@ param subnets array = [
   'gatewaySubnet'
   'subnet1'
 ]
-resource vnet 'Microsoft.Network/virtualNetworks@2023-06-01' existing = {
+resource vnet 'Microsoft.Network/virtualNetworks@2023-09-01' existing = {
   name: vnetName
 }
 var virtualNetworkRules = [

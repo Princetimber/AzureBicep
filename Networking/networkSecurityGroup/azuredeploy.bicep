@@ -116,7 +116,7 @@ var securityRules = [
     }
   }
 ]
-resource nsg 'Microsoft.Network/networkSecurityGroups@2023-06-01' = {
+resource nsg 'Microsoft.Network/networkSecurityGroups@2023-09-01' = {
   name: name
   location: location
   tags: tags

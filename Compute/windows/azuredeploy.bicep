@@ -199,7 +199,7 @@ var diagnosticsProfileJson = {
     storageUri: storageAccountUri
   }
 }
-resource vnet 'Microsoft.Network/virtualNetworks@2023-06-01' existing = {
+resource vnet 'Microsoft.Network/virtualNetworks@2023-09-01' existing = {
   name: vnetName
 }
 resource proximityPlacementGroup 'Microsoft.Compute/proximityPlacementGroups@2023-09-01' = {
@@ -238,7 +238,7 @@ resource availabilitySet 'Microsoft.Compute/availabilitySets@2023-09-01' = {
     displayname: 'availabilitySet'
   }
 }
-resource networkInterface 'Microsoft.Network/networkInterfaces@2023-06-01' = [for i in virtualMachineCountRange: {
+resource networkInterface 'Microsoft.Network/networkInterfaces@2023-09-01' = [for i in virtualMachineCountRange: {
   name: '${vmName}${networkInterfaceName}${i + 1}'
   location: location
   properties: {
